@@ -2,7 +2,7 @@ package com.student.service;
 
 
 import com.student.domain.Student;
-import com.student.domain.StudentDto;
+import com.student.domain.dto.StudentDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.ResponseEntity;

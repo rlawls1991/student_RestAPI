@@ -1,20 +1,26 @@
 package com.student.domain;
 
 
+import com.student.domain.subject.Subject;
 import lombok.*;
+import org.apache.tomcat.jni.Local;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Builder @AllArgsConstructor @NoArgsConstructor
-@Getter @Setter @EqualsAndHashCode(of = "id")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@EqualsAndHashCode(of = "id")
 @Entity
+@Setter
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
+    @Column(name = "student_id")
     private Integer id;
 
     private String name;
@@ -24,4 +30,16 @@ public class Student {
     private String address;
     private boolean useInfo;
     private LocalDateTime createDateTime;
+
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    private List<Subject> grades = new ArrayList<>();
+
+    public void createSetting() {
+        this.createDateTime = LocalDateTime.now();
+        this.useInfo = true;
+    }
+
+    public void deleteSetting() {
+        this.useInfo = false;
+    }
 }

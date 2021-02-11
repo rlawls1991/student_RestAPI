@@ -1,15 +1,18 @@
 package com.student.service;
 
+import com.student.Error.ApiResponseMessage;
 import com.student.domain.Student;
-import com.student.domain.StudentDto;
+import com.student.domain.dto.StudentDto;
 import com.student.domain.StudentRepository;
 import com.student.domain.StudentResource;
 import com.student.domain.controller.StudentController;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,20 +22,21 @@ import java.util.Optional;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Service
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
 
-    public StudentServiceImpl(StudentRepository studentRepository, ModelMapper modelMapper) {
-        this.studentRepository = studentRepository;
-        this.modelMapper = modelMapper;
-    }
-
     @Override
     public ResponseEntity createStudent(final StudentDto studentDto) {
         Student student = modelMapper.map(studentDto, Student.class);
-        student.setUseInfo(true);
+        student.createSetting();
+        
+        if(true){
+            ApiResponseMessage message = new ApiResponseMessage("Fail", "overlapData", "", "");
+            return new ResponseEntity<ApiResponseMessage>(message, HttpStatus.BAD_REQUEST);
+        }
 
         Student newStudent = this.studentRepository.save(student);
         var selfLinkBuilder = linkTo(StudentController.class).slash(newStudent.getId());

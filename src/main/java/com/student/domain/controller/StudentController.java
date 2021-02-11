@@ -3,9 +3,10 @@ package com.student.domain.controller;
 
 import com.student.Error.ErrorsResource;
 import com.student.domain.Student;
-import com.student.domain.StudentDto;
 import com.student.domain.StudentValidator;
+import com.student.domain.dto.StudentDto;
 import com.student.service.StudentService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -20,14 +21,10 @@ import javax.validation.Valid;
 @Slf4j
 @Controller
 @RequestMapping(value = "/api/student", produces = MediaTypes.HAL_JSON_VALUE)
+@RequiredArgsConstructor
 public class StudentController {
     private final StudentValidator studentValidator;
     private final StudentService studentService;
-
-    public StudentController(StudentValidator studentValidator, StudentService studentService) {
-        this.studentValidator = studentValidator;
-        this.studentService = studentService;
-    }
 
     /**
      * 학생 생성 Controller
