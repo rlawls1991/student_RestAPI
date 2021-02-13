@@ -1,109 +1,81 @@
 package com.student.service;
 
-import com.student.Error.ApiResponseMessage;
 import com.student.domain.Student;
-import com.student.domain.dto.StudentDto;
-import com.student.domain.StudentRepository;
 import com.student.domain.StudentResource;
-import com.student.domain.controller.StudentController;
+import com.student.domain.dto.SearchDto;
+import com.student.domain.dto.StudentDto;
+import com.student.domain.repository.StudentRepositoryCustom;
+import com.student.domain.repository.StudentRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 
-    private final StudentRepository studentRepository;
+    private final StudentRepositoryCustom studentRepository;
     private final ModelMapper modelMapper;
 
     @Override
-    public ResponseEntity createStudent(final StudentDto studentDto) {
+    @Transactional
+    public Student createStudent(final StudentDto studentDto) {
         Student student = modelMapper.map(studentDto, Student.class);
         student.createSetting();
-        
-        if(true){
-            ApiResponseMessage message = new ApiResponseMessage("Fail", "overlapData", "", "");
-            return new ResponseEntity<ApiResponseMessage>(message, HttpStatus.BAD_REQUEST);
-        }
 
-        Student newStudent = this.studentRepository.save(student);
-        var selfLinkBuilder = linkTo(StudentController.class).slash(newStudent.getId());
-        URI createdUri = selfLinkBuilder.toUri();
-        StudentResource studentResource = new StudentResource(newStudent);
-        studentResource.add(linkTo(StudentController.class).withRel("query-students"));
-        studentResource.add(selfLinkBuilder.withRel("update-student"));
-        studentResource.add(Link.of("/docs/index.html#resources-student-create").withRel("profile"));
+        studentRepository.saveStudent(student);
 
-        return ResponseEntity.created(createdUri).body(studentResource);
+        return student;
     }
 
     @Override
-    public ResponseEntity queryStudent(final Pageable pageable, final PagedResourcesAssembler<Student> assembler) {
-
-        Page<Student> page = this.studentRepository.findAll(pageable);
-
-        var pageResource = assembler.toModel(page, e -> new StudentResource(e));
-        pageResource.add(Link.of("/docs/index.html#resources-student-list").withRel("profile"));
-
-        return ResponseEntity.ok(pageResource);
+    public Student searchStudent(final StudentDto studentDto){
+        return studentRepository.findByStudent(studentDto);
     }
 
     @Override
-    public ResponseEntity getStudent(final int id) {
-        Optional<Student> optionalStudent = this.studentRepository.findById(id);
-
-        if(optionalStudent.isPresent()){
-            return ResponseEntity.notFound().build();
-        }
-
-        StudentResource studentResource = new StudentResource(optionalStudent.get());
-        studentResource.add(Link.of("/docs/index.html#resources-student-get").withRel("profile"));
-
-        return ResponseEntity.ok(studentResource);
+    public Page<Student> queryStudent(final Pageable pageable, SearchDto searchDto) {
+        return studentRepository.findAll(searchDto, pageable);
     }
 
     @Override
-    public ResponseEntity updateStudent(final int id, final StudentDto studentDto) {
-        Optional<Student> optionalStudent = this.studentRepository.findById(id);
-
-        if(optionalStudent.isPresent()){
-            return ResponseEntity.notFound().build();
-        }
-
-        Student existingStudent = new Student();
-        this.modelMapper.map(studentDto, existingStudent);
-        existingStudent = this.studentRepository.save(existingStudent);
-        StudentResource studentResource = new StudentResource(existingStudent);
-        studentResource.add(Link.of("/docs/index.html#resources-student-update").withRel("profile"));
-
-        return ResponseEntity.ok(studentResource);
+    public Student getStudent(final Integer id) {
+        return studentRepository.findById(id);
     }
 
     @Override
-    public ResponseEntity deleteStudent(final int id) {
-        Optional<Student> optionalStudent = this.studentRepository.findById(id);
+    @Transactional
+    public Student updateStudent(final Integer id, final StudentDto dto) {
+        Student student = studentRepository.findById(id);
 
-        if(optionalStudent.isPresent()){
-            return ResponseEntity.notFound().build();
-        }
+        student.setAge(dto.getAge());
+        student.setName(dto.getName());
+        student.setAddress(dto.getAddress());
+        student.setEmail(dto.getEmail());
+        student.setPhone(student.getPhone());
 
-        studentRepository.delete(optionalStudent.get());
+        studentRepository.saveStudent(student);
 
-        StudentResource studentResource = new StudentResource(optionalStudent.get());
-        studentResource.add(Link.of("/docs/index.html#resources-student-delete").withRel("profile"));
+        return student;
+    }
 
-        return ResponseEntity.ok(studentResource);
+    @Override
+    @Transactional
+    public Student deleteStudent(final Integer id) {
+        Student student = studentRepository.findById(id);
+
+        studentRepository.deleteById(id);
+
+        return student;
     }
 }

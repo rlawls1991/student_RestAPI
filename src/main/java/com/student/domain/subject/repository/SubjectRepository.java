@@ -1,4 +1,4 @@
-package com.student.domain.repository;
+package com.student.domain.subject.repository;
 
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -7,19 +7,17 @@ import com.student.domain.QStudent;
 import com.student.domain.subject.QSubject;
 import com.student.domain.subject.Subject;
 import com.student.domain.subject.SubjectKindStatus;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
 public class SubjectRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
 
-    public SubjectRepository(EntityManager em) {
+    public SubjectRepository(EntityManager em){
         this.em = em;
         this.query = new JPAQueryFactory(em);
     }

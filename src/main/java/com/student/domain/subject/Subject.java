@@ -12,7 +12,7 @@ public class Subject {
 
     @Id @GeneratedValue
     @Column(name ="subject_id")
-    private long id;
+    private Integer id;
 
     @Enumerated(EnumType.STRING)
     private SubjectKindStatus subjectKindStatus;
@@ -23,5 +23,5 @@ public class Subject {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
-    private Student student; //주문
+    private Student student;
 }

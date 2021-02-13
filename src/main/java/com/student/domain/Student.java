@@ -31,7 +31,7 @@ public class Student {
     private boolean useInfo;
     private LocalDateTime createDateTime;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Subject> grades = new ArrayList<>();
 
     public void createSetting() {
