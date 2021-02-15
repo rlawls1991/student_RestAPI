@@ -47,7 +47,7 @@ public class StudentController {
      */
     @PostMapping
     public @ResponseBody
-    ResponseEntity createStudent(@Valid StudentDto studentDto, Errors errors) {
+    ResponseEntity createStudent(@Valid @RequestBody StudentDto studentDto, Errors errors) {
         if (errors.hasErrors()) {
             return badRequest(errors);
         }
@@ -82,8 +82,7 @@ public class StudentController {
      * @return
      */
     @GetMapping("/{id}")
-    public @ResponseBody
-    ResponseEntity getStudent(@PathVariable Integer id) {
+    public ResponseEntity getStudent(@PathVariable Integer id) {
         Student student = studentService.getStudent(id);
 
         if (student == null) {
@@ -105,8 +104,7 @@ public class StudentController {
      * @return
      */
     @GetMapping
-    public @ResponseBody
-    ResponseEntity queryStudents(@Valid SearchDto searchDto, Pageable pageable, PagedResourcesAssembler<Student> assembler) {
+    public ResponseEntity queryStudents(@Valid SearchDto searchDto, Pageable pageable, PagedResourcesAssembler<Student> assembler) {
 
         Page<Student> studentPages = studentService.queryStudent(pageable, searchDto);
 

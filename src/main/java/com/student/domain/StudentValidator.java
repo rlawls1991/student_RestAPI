@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 public class StudentValidator {
 
     public void validate(final StudentDto studentDto, final Errors errors) {
-
+        if(studentDto.getName().length() > 10){
+            errors.rejectValue("name", "wrongValue", "10 is greater than nameLength.");
+        }
     }
 }

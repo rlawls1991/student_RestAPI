@@ -57,6 +57,9 @@ dependencies {
 	implementation 'com.querydsl:querydsl-apt'
 
 	compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+	// https://mvnrepository.com/artifact/org.springframework.restdocs/spring-restdocs-mockmvc
+	testCompile group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.3.RELEASE'
+
 
 }
 
