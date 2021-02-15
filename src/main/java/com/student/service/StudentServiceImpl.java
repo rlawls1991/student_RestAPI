@@ -1,30 +1,22 @@
 package com.student.service;
 
 import com.student.domain.Student;
-import com.student.domain.StudentResource;
 import com.student.domain.dto.SearchDto;
 import com.student.domain.dto.StudentDto;
-import com.student.domain.repository.StudentRepositoryCustom;
-import com.student.domain.repository.StudentRepositoryImpl;
+import com.student.domain.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.Link;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 
-    private final StudentRepositoryCustom studentRepository;
+    private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -32,10 +24,7 @@ public class StudentServiceImpl implements StudentService {
     public Student createStudent(final StudentDto studentDto) {
         Student student = modelMapper.map(studentDto, Student.class);
         student.createSetting();
-
-        studentRepository.saveStudent(student);
-
-        return student;
+        return studentRepository.saveAndFlush(student);
     }
 
     @Override
@@ -62,20 +51,15 @@ public class StudentServiceImpl implements StudentService {
         student.setName(dto.getName());
         student.setAddress(dto.getAddress());
         student.setEmail(dto.getEmail());
-        student.setPhone(student.getPhone());
+        student.setPhone(dto.getPhone());
 
-        studentRepository.saveStudent(student);
-
-        return student;
+        return studentRepository.saveAndFlush(student);
     }
 
     @Override
     @Transactional
-    public Student deleteStudent(final Integer id) {
+    public void deleteStudent(final Integer id) {
         Student student = studentRepository.findById(id);
-
-        studentRepository.deleteById(id);
-
-        return student;
+        studentRepository.delete(student);
     }
 }

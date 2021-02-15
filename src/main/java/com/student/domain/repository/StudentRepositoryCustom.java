@@ -16,12 +16,6 @@ public interface StudentRepositoryCustom {
     public Student findByStudent(StudentDto dto);
 
     /**
-     * 학생 저장
-     * @param student
-     */
-    public void saveStudent(Student student);
-
-    /**
      * 학생 페이징 형태로 조회
      * @param dto
      * @param pageable
@@ -37,5 +31,4 @@ public interface StudentRepositoryCustom {
      */
     public Student findById(Integer id);
 
-    public void deleteById(Integer id);
 }

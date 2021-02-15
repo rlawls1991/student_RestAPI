@@ -36,10 +36,6 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
                 .fetchOne();
     }
 
-    public void saveStudent(Student student) {
-        em.persist(student);
-    }
-
     public Page<Student> findAll(SearchDto dto, Pageable pageable) {
         QStudent student = QStudent.student;
         QSubject subject = QSubject.subject;
@@ -57,14 +53,6 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
                 .fetchResults();
 
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
-    }
-
-    public void deleteById(Integer id) {
-        QStudent student = QStudent.student;
-
-        query.delete(student)
-                .where(idEq(id))
-                .execute();
     }
 
     public Student findById(Integer id) {

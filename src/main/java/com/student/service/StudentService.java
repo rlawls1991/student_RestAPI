@@ -53,5 +53,5 @@ public interface StudentService {
      *
      * @return
      */
-    public Student deleteStudent(final Integer id);
+    public void deleteStudent(final Integer id);
 }

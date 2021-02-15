@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.annotation.RequestScope;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -46,8 +47,7 @@ public class StudentController {
      * @return
      */
     @PostMapping
-    public @ResponseBody
-    ResponseEntity createStudent(@Valid @RequestBody StudentDto studentDto, Errors errors) {
+    public ResponseEntity createStudentResponseBodynt(@Valid @RequestBody StudentDto studentDto, Errors errors) {
         if (errors.hasErrors()) {
             return badRequest(errors);
         }
@@ -109,26 +109,29 @@ public class StudentController {
         Page<Student> studentPages = studentService.queryStudent(pageable, searchDto);
 
         var pageResource = assembler.toModel(studentPages, e -> new StudentResource(e));
-        pageResource.add(Link.of("/docs/index.html#resources-events-list").withRel("profile"));
-        pageResource.add(linkTo(StudentController.class).withRel("create-event"));
+        pageResource.add(Link.of("/docs/index.html#resources-students-list").withRel("profile"));
 
         return ResponseEntity.ok(pageResource);
     }
 
     @PutMapping("/{id}")
-    public @ResponseBody
-    ResponseEntity updateStudent(@PathVariable Integer id,
-                                 @Valid StudentDto studentDto, Errors errors) {
+    public ResponseEntity updateStudent(@PathVariable Integer id,
+                                        @RequestBody @Valid StudentDto studentDto, Errors errors) {
         if (errors.hasErrors()) {
             return badRequest(errors);
         }
-        Student student = studentService.getStudent(id);
+        studentValidator.validate(studentDto, errors);
+        if (errors.hasErrors()) {
+            return badRequest(errors);
+        }
 
+        Student student = studentService.getStudent(id);
         if (student == null) {
             return ResponseEntity.notFound().build();
         }
 
         Student existingStudent = studentService.updateStudent(id, studentDto);
+
         StudentResource studentResource = new StudentResource(existingStudent);
         studentResource.add(Link.of("/docs/index.html#resources-student-update").withRel("profile"));
 
@@ -136,18 +139,13 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public @ResponseBody
-    ResponseEntity deleteStudent(@PathVariable Integer id, Errors errors) {
-        if (errors.hasErrors()) {
-            return badRequest(errors);
-        }
+    public ResponseEntity deleteStudent(@PathVariable Integer id) {
         Student student = studentService.getStudent(id);
         if (student == null) {
             return ResponseEntity.notFound().build();
         }
 
-        Student deleteStudent = studentService.deleteStudent(id);
-        StudentResource studentResource = new StudentResource(deleteStudent);
+        StudentResource studentResource = new StudentResource(student);
         studentResource.add(Link.of("/docs/index.html#resources-student-delete").withRel("profile"));
 
         return ResponseEntity.ok(studentResource);
