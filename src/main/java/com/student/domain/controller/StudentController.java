@@ -155,7 +155,6 @@ public class StudentController {
         return ResponseEntity.ok(studentResource);
     }
 
-
     private ResponseEntity<?> badRequest(Errors errors) {
         return ResponseEntity.badRequest().body(new ErrorsResource(errors));
     }
