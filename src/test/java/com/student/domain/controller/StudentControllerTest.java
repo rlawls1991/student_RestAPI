@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.student.domain.Student;
 import com.student.domain.common.RestDocsConfiguration;
 import com.student.domain.dto.StudentDto;
+import com.student.domain.repository.StudentRepository;
 import com.student.domain.repository.StudentRepositoryCustom;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,15 +19,17 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,7 +47,10 @@ public class StudentControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    StudentRepositoryCustom studentRepository;
+    StudentRepository studentRepository;
+
+    @Autowired
+    private EntityManager em;
 
 
     @Test
@@ -168,7 +174,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    @DisplayName("30개의 이벤트를 10개식 두번째 페이지 조회하기")
+    @DisplayName("30명의 학생들을 10개식 조회하기")
     public void queryStudents() throws Exception {
         // When
         ResultActions perform = mockMvc.perform(get("/api/student")
@@ -182,11 +188,139 @@ public class StudentControllerTest {
         // Then
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("page").exists())
-                .andExpect(jsonPath("_embedded.studentList[0]._links.self").exists())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
-                .andDo(document("query-events"))
+                .andDo(document("query-students"))
         ;
     }
 
+    @Test
+    @Transactional
+    @DisplayName("기존의 학생를 하나 조회하기")
+    public void getStudent() throws Exception {
+        // Given
+        Student student = saveStudent(100);
+
+        // When & Then
+        this.mockMvc.perform(get("/api/student/{id}", student.getId())
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").exists())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andDo(document("get-an-student"))
+        ;
+    }
+
+    @Test
+    @DisplayName("없는 학생을 조회했을 때 404 응답")
+    public void getStudent404() throws Exception {
+        // When & Then
+        this.mockMvc.perform(get("/api/student/{id}", 1004))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("데이터 수정")
+    public void updateStudent() throws Exception {
+        // Given
+        Student student = saveStudent(1001);
+
+        StudentDto studentDto = StudentDto.builder()
+                .name("수정" + student.getId())
+                .email("update@test.com")
+                .address("수정된주소")
+                .phone("010-4321-1234")
+                .age(30)
+                .build();
+
+        this.mockMvc.perform(put("/api/student/{id}", student.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(this.objectMapper.writeValueAsString(studentDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").value(studentDto.getName()))
+                .andExpect(jsonPath("email").value(studentDto.getEmail()))
+                .andExpect(jsonPath("address").value(studentDto.getAddress()))
+                .andExpect(jsonPath("phone").value(studentDto.getPhone()))
+                .andExpect(jsonPath("age").value(studentDto.getAge()))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+                .andDo(document("update-student"))
+        ;
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("입력 받을 수 없는 값을 사용한 경우에 에러가 발생한하는 테스트")
+    public void updateStudent_Bad_Request() throws Exception {
+        // Given
+        Student student = saveStudent(1001);
+
+        this.mockMvc.perform(put("/api/student/{id}", student.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(student)))
+                .andExpect(status().isBadRequest())
+        ;
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("없는 학생을 수정했을 때 404응답")
+    public void updateStudent404() throws Exception {
+        // Given
+        StudentDto studentDto = StudentDto.builder()
+                .name("123456")
+                .address("경기도 안양시")
+                .age(31)
+                .email("test@test.com")
+                .phone("010-1234-1234")
+                .build();
+
+        // When & Then
+        this.mockMvc.perform(put("/api/student/{id}", 1004)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(studentDto)))
+                .andExpect(status().isNotFound())
+        ;
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("기존의 이벤트를 하나 삭제하기")
+    public void deleteEvent() throws Exception {
+        // Given
+        Student student = saveStudent(1001);
+
+        this.mockMvc.perform(delete("/api/student/" + student.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaTypes.HAL_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("_links.self").exists())
+            .andExpect(jsonPath("_links.profile").exists())
+        ;
+    }
+
+    @Test
+    @DisplayName("없는 학생을 삭제했을 때 404 응답")
+    public void deleteStudent404() throws Exception {
+        // When & Then
+        this.mockMvc.perform(delete("/api/student/{id}", 1004))
+                .andExpect(status().isNotFound());
+    }
+
+    private Student saveStudent(int index){
+        Student student = Student.builder()
+                .name("test" + index)
+                .address("경기도 안양시")
+                .age(31)
+                .email("test@test.com")
+                .phone("010-1234-1234")
+                .build();
+        student.createSetting();
+
+        return studentRepository.save(student);
+    }
 }
