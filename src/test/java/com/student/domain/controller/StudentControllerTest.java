@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.student.domain.Student;
 import com.student.domain.common.RestDocsConfiguration;
 import com.student.domain.dto.StudentDto;
+import com.student.domain.dto.StudentInputDto;
 import com.student.domain.repository.StudentRepository;
 import com.student.domain.repository.StudentRepositoryCustom;
 import org.junit.jupiter.api.DisplayName;
@@ -57,7 +58,7 @@ public class StudentControllerTest {
     @Transactional
     @DisplayName("정상적으로 학생을 생성하는 테스트")
     public void createStudent() throws Exception {
-        StudentDto studentDto = StudentDto.builder()
+        StudentInputDto studentInputDto = StudentInputDto.builder()
                 .name("테스트용")
                 .address("경기도 안양시")
                 .age(31)
@@ -68,7 +69,7 @@ public class StudentControllerTest {
         ResultActions perform = mockMvc.perform(post("/api/student")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
-                .content(this.objectMapper.writeValueAsString(studentDto)))
+                .content(this.objectMapper.writeValueAsString(studentInputDto)))
                 .andDo(print());
 
         perform.andExpect(status().isCreated())
@@ -228,7 +229,7 @@ public class StudentControllerTest {
         // Given
         Student student = saveStudent(1001);
 
-        StudentDto studentDto = StudentDto.builder()
+        StudentInputDto studentInputDto = StudentInputDto.builder()
                 .name("수정" + student.getId())
                 .email("update@test.com")
                 .address("수정된주소")
@@ -236,16 +237,16 @@ public class StudentControllerTest {
                 .age(30)
                 .build();
 
-        this.mockMvc.perform(put("/api/student/{id}", student.getId())
+        this.mockMvc.perform(put("/api/student/{id}", String.valueOf(student.getId()))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(this.objectMapper.writeValueAsString(studentDto)))
+                    .content(this.objectMapper.writeValueAsString(studentInputDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("name").value(studentDto.getName()))
-                .andExpect(jsonPath("email").value(studentDto.getEmail()))
-                .andExpect(jsonPath("address").value(studentDto.getAddress()))
-                .andExpect(jsonPath("phone").value(studentDto.getPhone()))
-                .andExpect(jsonPath("age").value(studentDto.getAge()))
+                .andExpect(jsonPath("name").value(studentInputDto.getName()))
+                .andExpect(jsonPath("email").value(studentInputDto.getEmail()))
+                .andExpect(jsonPath("address").value(studentInputDto.getAddress()))
+                .andExpect(jsonPath("phone").value(studentInputDto.getPhone()))
+                .andExpect(jsonPath("age").value(studentInputDto.getAge()))
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
                 .andDo(document("update-student"))
@@ -259,7 +260,7 @@ public class StudentControllerTest {
         // Given
         Student student = saveStudent(1001);
 
-        this.mockMvc.perform(put("/api/student/{id}", student.getId())
+        this.mockMvc.perform(put("/api/student/{id}", String.valueOf(student.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(student)))
                 .andExpect(status().isBadRequest())
@@ -271,8 +272,8 @@ public class StudentControllerTest {
     @DisplayName("없는 학생을 수정했을 때 404응답")
     public void updateStudent404() throws Exception {
         // Given
-        StudentDto studentDto = StudentDto.builder()
-                .name("123456")
+        StudentInputDto studentInputDto = StudentInputDto.builder()
+                .name("테스트용")
                 .address("경기도 안양시")
                 .age(31)
                 .email("test@test.com")
@@ -282,7 +283,7 @@ public class StudentControllerTest {
         // When & Then
         this.mockMvc.perform(put("/api/student/{id}", 1004)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(studentDto)))
+                .content(objectMapper.writeValueAsString(studentInputDto)))
                 .andExpect(status().isNotFound())
         ;
     }
@@ -294,7 +295,7 @@ public class StudentControllerTest {
         // Given
         Student student = saveStudent(1001);
 
-        this.mockMvc.perform(delete("/api/student/" + student.getId())
+        this.mockMvc.perform(delete("/api/student/{id}", String.valueOf(student.getId()))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaTypes.HAL_JSON))
             .andExpect(status().isOk())

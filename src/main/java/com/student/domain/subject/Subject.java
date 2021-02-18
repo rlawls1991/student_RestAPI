@@ -12,7 +12,7 @@ public class Subject {
 
     @Id @GeneratedValue
     @Column(name ="subject_id")
-    private Integer id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private SubjectKindStatus subjectKindStatus;

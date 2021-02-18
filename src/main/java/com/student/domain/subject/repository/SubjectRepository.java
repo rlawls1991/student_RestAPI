@@ -35,7 +35,7 @@ public class SubjectRepository {
         return QStudent.student.name.eq(name);
     }
 
-    private BooleanExpression studentIdEq(Integer id) {
+    private BooleanExpression studentIdEq(Long id) {
         return QStudent.student.id.eq(id);
     }
 

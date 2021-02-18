@@ -27,8 +27,8 @@ public class StudentServiceImpl implements StudentService {
     public StudentDto createStudent(final StudentInputDto studentInput) {
         Student student = modelMapper.map(studentInput, Student.class);
         student.createSetting();
+        Student saveStudent = studentRepository.save(student);
 
-        Student saveStudent = studentRepository.saveAndFlush(student);
         return modelMapper.map(saveStudent, StudentDto.class);
     }
 
@@ -43,35 +43,33 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentDto getStudent(final Integer id) {
-        Optional<Student> student = studentRepository.findById(Long.valueOf(id));
+    public StudentDto getStudent(final Long id) {
+        StudentDto student = studentRepository.findByStudent(id);
 
-        if (student.isPresent()) {
+        if (student == null) {
             return null;
         }
 
-        return modelMapper.map(student, StudentDto.class);
+        return student;
     }
 
     @Override
     @Transactional
-    public StudentDto updateStudent(final Integer id, final StudentInputDto studentInput) {
-        Optional<Student> student = studentRepository.findById(id.longValue());
+    public StudentDto updateStudent(final Long id, final StudentInputDto studentInput) {
+        StudentDto studentDto = studentRepository.findByStudent(id);
 
-        student.get().setAge(studentInput.getAge());
-        student.get().setName(studentInput.getName());
-        student.get().setAddress(studentInput.getAddress());
-        student.get().setEmail(studentInput.getEmail());
-        student.get().setPhone(studentInput.getPhone());
+        studentDto.setAge(studentInput.getAge());
+        studentDto.setName(studentInput.getName());
+        studentDto.setAddress(studentInput.getAddress());
+        studentDto.setEmail(studentInput.getEmail());
+        studentDto.setPhone(studentInput.getPhone());
 
-
-        return modelMapper.map(studentRepository.save(student.get()), StudentDto.class);
+        return studentDto;
     }
 
     @Override
     @Transactional
-    public void deleteStudent(final Integer id) {
-        Optional<Student> student = studentRepository.findById(id.longValue());
-        studentRepository.delete(student.get());
+    public void deleteStudent(final Long id) {
+        studentRepository.deleteById(id);
     }
 }

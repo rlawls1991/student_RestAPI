@@ -37,19 +37,19 @@ public interface StudentService {
      *
      * @return
      */
-    public StudentDto getStudent(final Integer id);
+    public StudentDto getStudent(final Long id);
 
     /**
      * 학생 정보를 수정하는 서비스
      *
      * @return
      */
-    public StudentDto updateStudent(final Integer id, final StudentInputDto studentInput);
+    public StudentDto updateStudent(final Long id, final StudentInputDto studentInput);
 
     /**
      * 학생을 삭제하는 서비스(Y->N으로 수정)
      *
      * @return
      */
-    public void deleteStudent(final Integer id);
+    public void deleteStudent(final Long id);
 }

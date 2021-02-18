@@ -4,6 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import com.student.domain.subject.Subject;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,8 +12,9 @@ import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
 public class StudentDto {
-    private Integer id;
+    private Long id;
     private String name;
     private int age;
     private String phone;
@@ -23,7 +25,7 @@ public class StudentDto {
     private LocalDateTime createDateTime;
 
     @QueryProjection
-    public StudentDto(Integer id, String name, int age, String phone, String email, String address, LocalDateTime createDateTime) {
+    public StudentDto(Long id, String name, int age, String phone, String email, String address, LocalDateTime createDateTime) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -34,7 +36,7 @@ public class StudentDto {
     }
 
     @QueryProjection
-    public StudentDto(Integer id, String name, int age, String phone, String email, String address, List<Subject> grades, LocalDateTime createDateTime) {
+    public StudentDto(Long id, String name, int age, String phone, String email, String address, List<Subject> grades, LocalDateTime createDateTime) {
         this.id = id;
         this.name = name;
         this.age = age;

@@ -79,7 +79,7 @@ public class StudentController {
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity getStudent(@PathVariable Integer id) {
+    public ResponseEntity getStudent(@PathVariable Long id) {
         StudentDto student = studentService.getStudent(id);
 
         if (student == null) {
@@ -96,7 +96,7 @@ public class StudentController {
      * 학생들의 정보 조회(페이징)
      *
      * @param pageable
-     * @param assembler
+     * @param
      * @param searchDto
      * @return
      */
@@ -120,7 +120,7 @@ public class StudentController {
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity updateStudent(@PathVariable Integer id,
+    public ResponseEntity updateStudent(@PathVariable Long id,
                                         @RequestBody @Valid StudentInputDto studentInput, Errors errors) {
         if (errors.hasErrors()) {
             return badRequest(errors);
@@ -150,7 +150,7 @@ public class StudentController {
      * @return
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteStudent(@PathVariable Integer id) {
+    public ResponseEntity deleteStudent(@PathVariable Long id) {
         StudentDto student = studentService.getStudent(id);
         if (student == null) {
             return ResponseEntity.notFound().build();

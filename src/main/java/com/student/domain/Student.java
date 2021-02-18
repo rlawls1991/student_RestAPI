@@ -13,15 +13,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@EqualsAndHashCode(of = "id")
-@Entity
-@Setter
+@Getter @EqualsAndHashCode(of = "id")
+@Entity @Setter
 public class Student {
     @Id
     @GeneratedValue
     @Column(name = "student_id")
-    private Integer id;
+    private Long id;
 
     private String name;
     private int age;
