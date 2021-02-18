@@ -1,24 +1,47 @@
 package com.student.domain.dto;
 
-import lombok.*;
+import com.querydsl.core.annotations.QueryProjection;
+import com.student.domain.subject.Subject;
+import lombok.Builder;
+import lombok.Data;
 
-import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class StudentDto {
-    @NotEmpty
+    private Integer id;
     private String name;
-    @Min(1)
     private int age;
-    @NotBlank
     private String phone;
-    @NotBlank
-    @Email
     private String email;
-    @NotBlank
     private String address;
+
+    private List<Subject> grades = new ArrayList<>();
+    private LocalDateTime createDateTime;
+
+    @QueryProjection
+    public StudentDto(Integer id, String name, int age, String phone, String email, String address, LocalDateTime createDateTime) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.createDateTime = createDateTime;
+    }
+
+    @QueryProjection
+    public StudentDto(Integer id, String name, int age, String phone, String email, String address, List<Subject> grades, LocalDateTime createDateTime) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.grades = grades;
+        this.createDateTime = createDateTime;
+    }
 }

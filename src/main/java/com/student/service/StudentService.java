@@ -4,11 +4,9 @@ package com.student.service;
 import com.student.domain.Student;
 import com.student.domain.dto.SearchDto;
 import com.student.domain.dto.StudentDto;
+import com.student.domain.dto.StudentInputDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-
-import java.util.Optional;
 
 public interface StudentService {
 
@@ -17,36 +15,36 @@ public interface StudentService {
      *
      * @return
      */
-    public Student createStudent(final StudentDto studentDto);
+    public StudentDto createStudent(final StudentInputDto studentInput);
 
 
     /**
      * 학생을 조회하는 서비스
-     * @param studentDto
+     * @param studentInput
      * @return
      */
-    public Student searchStudent(final StudentDto studentDto);
+    public StudentDto searchStudent(final StudentInputDto studentInput);
 
     /**
      * 학생들을 조회하는 서비스
      *
      * @return
      */
-    public Page<Student> queryStudent(final Pageable pageable, final SearchDto searchDto);
+    public Page<StudentDto> queryStudent(final Pageable pageable, final SearchDto searchDto);
 
     /**
      * 학생 한명을 조회하는 서비스
      *
      * @return
      */
-    public Student getStudent(final Integer id);
+    public StudentDto getStudent(final Integer id);
 
     /**
      * 학생 정보를 수정하는 서비스
      *
      * @return
      */
-    public Student updateStudent(final Integer id, final StudentDto studentDto);
+    public StudentDto updateStudent(final Integer id, final StudentInputDto studentInput);
 
     /**
      * 학생을 삭제하는 서비스(Y->N으로 수정)

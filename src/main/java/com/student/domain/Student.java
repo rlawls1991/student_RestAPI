@@ -28,7 +28,6 @@ public class Student {
     private String phone;
     private String email;
     private String address;
-    private boolean useInfo;
     private LocalDateTime createDateTime;
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -36,10 +35,5 @@ public class Student {
 
     public void createSetting() {
         this.createDateTime = LocalDateTime.now();
-        this.useInfo = true;
-    }
-
-    public void deleteSetting() {
-        this.useInfo = false;
     }
 }

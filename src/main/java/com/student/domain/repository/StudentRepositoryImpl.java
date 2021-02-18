@@ -5,8 +5,10 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.student.domain.QStudent;
 import com.student.domain.Student;
+import com.student.domain.dto.QStudentDto;
 import com.student.domain.dto.SearchDto;
 import com.student.domain.dto.StudentDto;
+import com.student.domain.dto.StudentInputDto;
 import com.student.domain.subject.QSubject;
 import com.student.domain.subject.SubjectKindStatus;
 import lombok.RequiredArgsConstructor;
@@ -17,31 +19,49 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
+import static com.student.domain.QStudent.student;
+
 @Repository
 @RequiredArgsConstructor
 public class StudentRepositoryImpl implements StudentRepositoryCustom {
     private final JPAQueryFactory query;
     private final EntityManager em;
 
-    public Student findByStudent(StudentDto dto) {
-        QStudent student = QStudent.student;
-
+    public StudentDto findByStudent(StudentInputDto studentInput) {
         return query
-                .selectFrom(student)
-                .where(nameEq(dto.getName())
-                        , emailEq(dto.getEmail())
-                        , phoneEq(dto.getPhone())
-                        , ageEq(dto.getAge())
+                .select(new QStudentDto(
+                        student.id
+                        , student.name
+                        , student.age
+                        , student.phone
+                        , student.email
+                        , student.address
+                        , student.createDateTime))
+                .from(student)
+                .where(nameEq(studentInput.getName())
+                        , emailEq(studentInput.getEmail())
+                        , phoneEq(studentInput.getPhone())
+                        , ageEq(studentInput.getAge())
                 )
                 .fetchOne();
     }
 
-    public Page<Student> findAll(SearchDto dto, Pageable pageable) {
+    public Page<StudentDto> findAll(SearchDto dto, Pageable pageable) {
         QStudent student = QStudent.student;
         QSubject subject = QSubject.subject;
 
-        QueryResults<Student> result = query
-                .selectFrom(student)
+        QueryResults<StudentDto> result = query
+                .select( new QStudentDto(
+                        student.id
+                        , student.name
+                        , student.age
+                        , student.phone
+                        , student.email
+                        , student.address
+                        , student.grades
+                        , student.createDateTime
+                ))
+                .from(student)
                 .leftJoin(student.grades, subject)
                 .where(nameEq(dto.getName())
                         , emailEq(dto.getEmail())
@@ -55,35 +75,25 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
     }
 
-    public Student findById(Integer id) {
-        QStudent student = QStudent.student;
-
-        return query
-                .select(student)
-                .from(student)
-                .where(idEq(id))
-                .fetchOne();
-    }
-
     private BooleanExpression nameEq(String name) {
         if (name == null) {
             return null;
         }
-        return QStudent.student.name.eq(name);
+        return student.name.eq(name);
     }
 
     private BooleanExpression emailEq(String email) {
         if (email == null) {
             return null;
         }
-        return QStudent.student.email.eq(email);
+        return student.email.eq(email);
     }
 
     private BooleanExpression phoneEq(String phone) {
         if (phone == null) {
             return null;
         }
-        return QStudent.student.phone.eq(phone);
+        return student.phone.eq(phone);
     }
 
     private BooleanExpression ageEq(int age) {
@@ -91,14 +101,14 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
             return null;
         }
 
-        return QStudent.student.age.eq(age);
+        return student.age.eq(age);
     }
 
     private BooleanExpression idEq(Integer id) {
         if (id == 0) {
             return null;
         }
-        return QStudent.student.id.eq(id);
+        return student.id.eq(id);
     }
 
     private BooleanExpression subjectKindStatusEq(SubjectKindStatus status) {
