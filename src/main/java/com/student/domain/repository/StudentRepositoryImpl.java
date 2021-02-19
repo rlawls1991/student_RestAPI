@@ -7,7 +7,6 @@ import com.student.domain.dto.QStudentDto;
 import com.student.domain.dto.SearchDto;
 import com.student.domain.dto.StudentDto;
 import com.student.domain.dto.StudentInputDto;
-import com.student.domain.subject.SubjectKindStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -118,9 +117,4 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
         }
         return student.id.eq(id);
     }
-
-    private BooleanExpression subjectKindStatusEq(final SubjectKindStatus status) {
-        return subject.subjectKindStatus.eq(status);
-    }
-
 }
