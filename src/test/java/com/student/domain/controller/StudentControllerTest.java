@@ -6,7 +6,6 @@ import com.student.domain.common.RestDocsConfiguration;
 import com.student.domain.dto.StudentDto;
 import com.student.domain.dto.StudentInputDto;
 import com.student.domain.repository.StudentRepository;
-import com.student.domain.repository.StudentRepositoryCustom;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -52,7 +50,6 @@ public class StudentControllerTest {
 
     @Autowired
     private EntityManager em;
-
 
     @Test
     @Transactional

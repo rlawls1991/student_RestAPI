@@ -1,5 +1,6 @@
 package com.student.domain.subject;
 
+import com.student.domain.subject.english.EnglishStatus;
 import lombok.Getter;
 
 import javax.persistence.DiscriminatorValue;

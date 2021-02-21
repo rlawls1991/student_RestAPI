@@ -1,13 +1,13 @@
-package com.student.domain.subject;
+package com.student.domain.subject.english;
 
 import com.student.config.EnumModel;
 import lombok.RequiredArgsConstructor;
 
+
 @RequiredArgsConstructor
-public enum SubjectKindStatus implements EnumModel {
-    //중간고사, 기말고사
-    MIDTERM("midterm"),
-    FINAL("final");
+public enum EnglishStatus implements EnumModel {
+    //대화 , 이론
+    TALKING("talking"), GRAMMAR("grammar");
 
     private final String value;
 

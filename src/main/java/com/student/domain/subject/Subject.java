@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class Subject {
+public abstract class Subject {
 
     @Id @GeneratedValue
     @Column(name ="subject_id")

@@ -3,13 +3,12 @@ package com.student.domain.controller;
 
 import com.student.Error.ApiResponseMessage;
 import com.student.Error.ErrorsResource;
-import com.student.domain.Student;
 import com.student.domain.StudentResource;
 import com.student.domain.StudentValidator;
 import com.student.domain.dto.SearchDto;
 import com.student.domain.dto.StudentDto;
 import com.student.domain.dto.StudentInputDto;
-import com.student.service.StudentService;
+import com.student.domain.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
