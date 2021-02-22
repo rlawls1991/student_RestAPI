@@ -25,6 +25,11 @@ public class EnglishInputDto {
     @Max(100)
     private int score;
 
+    @NotEmpty
+    private String classCode;
+    @NotEmpty
+    private String professorName;
+
     @Enumerated(EnumType.STRING)
     private SubjectKindStatus subjectKindStatus;
 

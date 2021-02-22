@@ -48,9 +48,6 @@ public class StudentControllerTest {
     @Autowired
     StudentRepository studentRepository;
 
-    @Autowired
-    private EntityManager em;
-
     @Test
     @Transactional
     @DisplayName("정상적으로 학생을 생성하는 테스트")

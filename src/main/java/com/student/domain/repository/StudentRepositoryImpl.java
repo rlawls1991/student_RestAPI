@@ -3,6 +3,7 @@ package com.student.domain.repository;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.student.domain.Student;
 import com.student.domain.dto.QStudentDto;
 import com.student.domain.dto.SearchDto;
 import com.student.domain.dto.StudentDto;
@@ -80,6 +81,15 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
                 .fetchResults();
 
         return new PageImpl<>(result.getResults(), pageable, result.getTotal());
+    }
+
+    public Student findByEntity(final Long id){
+        return query
+                .select(student)
+                .from(student)
+                .leftJoin(student.grades)
+                .where(idEq(id))
+                .fetchOne();
     }
 
     private BooleanExpression nameEq(final String name) {

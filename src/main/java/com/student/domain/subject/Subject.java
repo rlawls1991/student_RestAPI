@@ -2,12 +2,14 @@ package com.student.domain.subject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.student.domain.Student;
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "dtype")
+@Getter @Setter
 public abstract class Subject {
 
     @Id @GeneratedValue

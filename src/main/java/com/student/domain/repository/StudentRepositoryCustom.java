@@ -35,4 +35,5 @@ public interface StudentRepositoryCustom {
      */
     public Page<StudentDto> findAll(final SearchDto dto, final Pageable pageable);
 
+    public Student findByEntity(final Long id);
 }
