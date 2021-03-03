@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.util.stream.IntStream;
+
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
@@ -169,13 +171,14 @@ public class StudentControllerTest {
     }
 
     @Test
+    @Transactional
     @DisplayName("30명의 학생들을 10개식 조회하기")
     public void queryStudents() throws Exception {
+        IntStream.range(1, 41).forEach(this::saveStudent);
         // When
         ResultActions perform = mockMvc.perform(get("/api/student")
                 .param("page", "1")
                 .param("size", "10")
-                .param("sort", "name,DESC")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON))
                 .andDo(print());

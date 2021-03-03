@@ -76,6 +76,7 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
                         , phoneEq(dto.getPhone())
                         , ageEq(dto.getAge())
                 )
+                .orderBy(student.createDateTime.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();

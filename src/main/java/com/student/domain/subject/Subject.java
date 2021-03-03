@@ -19,6 +19,7 @@ public abstract class Subject {
     @Enumerated(EnumType.STRING)
     private SubjectKindStatus subjectKindStatus;
 
+    @Column(nullable = true, length = 5)
     private String grade;
     private int score;
 

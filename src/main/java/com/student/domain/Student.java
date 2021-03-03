@@ -7,6 +7,7 @@ import com.student.domain.subject.SubjectKindStatus;
 import com.student.domain.subject.english.EnglishStatus;
 import lombok.*;
 import org.apache.tomcat.jni.Local;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,11 +27,16 @@ public class Student {
     @Column(name = "student_id")
     private Long id;
 
+    @Column(nullable = true, length = 30)
     private String name;
     private int age;
+    @Column(nullable = true, length = 30)
     private String phone;
+    @Column(nullable = true, length = 100)
     private String email;
+    @Column(nullable = true, length = 100)
     private String address;
+    @CreationTimestamp
     private LocalDateTime createDateTime;
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
